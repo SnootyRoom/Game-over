@@ -3,7 +3,7 @@ import pygame
 
 def main():
     pygame.init()
-    size = width, height = 300, 200
+    size = width, height = 300, 300
     screen = pygame.display.set_mode(size)
 
     player_img = pygame.image.load('data/creature.png')
@@ -18,29 +18,37 @@ def main():
     v = 10
     while running:
         screen.fill('white')
+        pygame.time.delay(60)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                down = True
+                if event.key == pygame.K_LEFT:
+                    left = True
+                if event.key == pygame.K_RIGHT:
+                    right = True
+                if event.key == pygame.K_DOWN:
+                    down = True
+                if event.key == pygame.K_UP:
+                    up = True
             if event.type == pygame.KEYUP:
-                up = True
-            if event.type == pygame.K_LEFT:
-                left = True
-            if event.type == pygame.K_RIGHT:
-                right = True
+                if event.key == pygame.K_LEFT:
+                    left = False
+                if event.key == pygame.K_RIGHT:
+                    right = False
+                if event.key == pygame.K_DOWN:
+                    down = False
+                if event.key == pygame.K_UP:
+                    up = False
         if down:
-            down = False
-            screen.blit(player_sprite.image, (x, y + v))
+            y += v
         if up:
-            up = False
-            screen.blit(player_sprite.image, (x, y - v))
+            y -= v
         if left:
-            left = False
-            screen.blit(player_sprite.image, (x - v, y))
+            x -= v
         if right:
-            right = False
-            screen.blit(player_sprite.image, (x + v, y))
+            x += v
+        screen.blit(player_sprite.image, (x, y))
         pygame.display.flip()
 
 
