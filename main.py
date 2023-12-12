@@ -6,19 +6,41 @@ def main():
     size = width, height = 300, 200
     screen = pygame.display.set_mode(size)
 
-    mouse_img = pygame.image.load('data/arrow.png')
-    arrow_sprite = pygame.sprite.Sprite()
-    arrow_sprite.image = mouse_img
-    pygame.mouse.set_visible(False)
-
+    player_img = pygame.image.load('data/creature.png')
+    player_sprite = pygame.sprite.Sprite()
+    player_sprite.image = player_img
+    down = False
+    up = False
+    right = False
+    left = False
     running = True
+    x, y = 0, 0
+    v = 10
     while running:
-        screen.fill('black')
+        screen.fill('white')
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        if pygame.mouse.get_focused():
-            screen.blit(arrow_sprite.image, pygame.mouse.get_pos())
+            if event.type == pygame.KEYDOWN:
+                down = True
+            if event.type == pygame.KEYUP:
+                up = True
+            if event.type == pygame.K_LEFT:
+                left = True
+            if event.type == pygame.K_RIGHT:
+                right = True
+        if down:
+            down = False
+            screen.blit(player_sprite.image, (x, y + v))
+        if up:
+            up = False
+            screen.blit(player_sprite.image, (x, y - v))
+        if left:
+            left = False
+            screen.blit(player_sprite.image, (x - v, y))
+        if right:
+            right = False
+            screen.blit(player_sprite.image, (x + v, y))
         pygame.display.flip()
 
 
