@@ -124,10 +124,14 @@ def start_screen():
 
 def load_level(filename):
     filename = "data/" + filename
-    with open(filename, 'r') as mapFile:
-        level_map = [line.strip() for line in mapFile]
-    max_width = max(map(len, level_map))
-    return list(map(lambda x: list(x.ljust(max_width, '.')), level_map))
+    try:
+        with open(filename, 'r') as mapFile:
+            level_map = [line.strip() for line in mapFile]
+        max_width = max(map(len, level_map))
+        return list(map(lambda x: list(x.ljust(max_width, '.')), level_map))
+    except FileNotFoundError:
+        print('Неверное название уровня!')
+        raise SystemExit()
 
 
 def generate_level(level):
@@ -161,8 +165,9 @@ def move(hero, movement):
             hero.move(x + 1, y)
 
 
+name_of_level = input()
+level_map = load_level(name_of_level)
 start_screen()
-level_map = load_level("levelex.txt")
 hero, max_x, max_y = generate_level(level_map)
 while running:
     for event in pygame.event.get():
