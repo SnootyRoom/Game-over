@@ -1,6 +1,7 @@
 import pygame
 import os
 import sys
+import random
 
 
 def load_image(name, colorkey=None):
@@ -12,27 +13,21 @@ def load_image(name, colorkey=None):
     return image
 
 
-class Car(pygame.sprite.Sprite):
-    image = load_image("car.png")
+class Bomb(pygame.sprite.Sprite):
+    image = load_image("bomb.png")
+    image_boom = pygame.transform.scale(load_image("boom.png"), image.get_size())
 
     def __init__(self, size):
         super().__init__(all_sprites)
-        self.image = Car.image
+        self.image = Bomb.image
         self.rect = self.image.get_rect()
-        self.x = 0
-        self.flipped_image = pygame.transform.flip(self.image, True, False)
-        self.direction = 1
-        self.max_x = size[0]
-        all_sprites.add(self)
+        self.rect.x = random.randrange(500 - self.rect.right)
+        self.rect.y = random.randrange(500 - self.rect.bottom)
 
     def update(self, *args):
-        if self.rect.right >= self.max_x:
-            self.image = self.flipped_image
-            self.direction = -1
-        elif self.rect.left <= 0:
-            self.image = Car.image
-            self.direction = 1
-        self.rect.x += 1 * self.direction
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN and \
+                self.rect.collidepoint(args[0].pos):
+            self.image = self.image_boom
 
 
 all_sprites = pygame.sprite.Group()
@@ -40,24 +35,25 @@ all_sprites = pygame.sprite.Group()
 
 def main():
     pygame.init()
-    size = 600, 95
+    size = 500, 500
     screen = pygame.display.set_mode(size)
 
-    car = Car(size)
+    bomb = Bomb(size)
     running = True
-    clock = pygame.time.Clock()
+
+    for _ in range(20):
+        Bomb(all_sprites)
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
-        all_sprites.update()
+        all_sprites.update(event)
 
-        screen.fill((255, 255, 255))
+        screen.fill((0, 0, 0))
         all_sprites.draw(screen)
         pygame.display.flip()
-
-        clock.tick(60)
 
     pygame.quit()
 
