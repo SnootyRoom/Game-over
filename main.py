@@ -1,7 +1,6 @@
 import pygame
 import os
 import sys
-import random
 
 
 def load_image(name, colorkey=None):
@@ -13,21 +12,19 @@ def load_image(name, colorkey=None):
     return image
 
 
-class Bomb(pygame.sprite.Sprite):
-    image = load_image("bomb.png")
-    image_boom = pygame.transform.scale(load_image("boom.png"), image.get_size())
+class GameOver(pygame.sprite.Sprite):
+    image = load_image("gameover.png")
 
     def __init__(self, size):
         super().__init__(all_sprites)
-        self.image = Bomb.image
+        self.image = GameOver.image
         self.rect = self.image.get_rect()
-        self.rect.x = random.randrange(500 - self.rect.right)
-        self.rect.y = random.randrange(500 - self.rect.bottom)
+        self.rect.right = -600
+        self.max_x = size[0]
 
     def update(self, *args):
-        if args and args[0].type == pygame.MOUSEBUTTONDOWN and \
-                self.rect.collidepoint(args[0].pos):
-            self.image = self.image_boom
+        if self.rect.right < self.max_x:
+            self.rect.right += 20
 
 
 all_sprites = pygame.sprite.Group()
@@ -35,25 +32,24 @@ all_sprites = pygame.sprite.Group()
 
 def main():
     pygame.init()
-    size = 500, 500
+    size = 600, 300
     screen = pygame.display.set_mode(size)
 
-    bomb = Bomb(size)
+    gameover = GameOver(size)
     running = True
-
-    for _ in range(20):
-        Bomb(all_sprites)
-
+    clock = pygame.time.Clock()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
-        all_sprites.update(event)
+        all_sprites.update()
 
-        screen.fill((0, 0, 0))
+        screen.fill((0, 0, 255))
         all_sprites.draw(screen)
         pygame.display.flip()
+
+        clock.tick(100)
 
     pygame.quit()
 
